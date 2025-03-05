@@ -2,7 +2,7 @@
 
 + 이미지 불러오기 및 그레이스케일 변환
 
-  + ![Image](https://github.com/user-attachments/assets/f77f1017-dd15-4a5d-8c30-2c483d1826ec)
+   ![Image](https://github.com/user-attachments/assets/f77f1017-dd15-4a5d-8c30-2c483d1826ec)
 
   + cv.imread를 사용해 이미지 로드
  
@@ -14,7 +14,7 @@
 
 + 웹캠 영상에서 에지 검출
 
-  + ![Image](https://github.com/user-attachments/assets/de145712-4c4c-47b3-9356-97e5dc60fd7a)
+   ![Image](https://github.com/user-attachments/assets/de145712-4c4c-47b3-9356-97e5dc60fd7a)
 
   + cv.VideoCapture를 사용해 웹캠 영상 로드
  
@@ -28,7 +28,7 @@
 
 + 마우스로 영역 선택 및 ROI(관심영역) 추출
 
-  + ![Image](https://github.com/user-attachments/assets/f57b6eb5-81a0-4c77-9350-f202bc18e24d)   
+   ![Image](https://github.com/user-attachments/assets/f57b6eb5-81a0-4c77-9350-f202bc18e24d)   
 
   + cv.imread를 사용해 이미지 로드
  
