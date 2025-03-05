@@ -28,6 +28,16 @@
  
   + 마우스의 움직임을 따라 사각형을 그리기 위해 시작 좌표 start_x, start_y와 종료 좌표 end_x, end_y, 그리는 상태 제어를 위한 drawing 변수 사용
  
+  + img.copy()를 사용해 원본 이미지 복사해 사용
+ 
   + cv.EVENT_LBUTTONDOWN(마우스가 눌림) 상태일 때 시작 좌표를 저장하고 drawing 상태를 True로 변경
  
-  + EVENT_MOUSEMOVE, drawing이 True일 때 cv.rectangle, cv.imshow를 사용해 사각형 그리기
+  + cv.EVENT_MOUSEMOVE, drawing이 True일 때 cv.rectangle, cv.imshow를 사용해 사각형 그리기
+ 
+  + EVENT_LBUTTONUP(마우스가 눌리지 않음) 상태일 때 종료 좌표를 저장하고 drawing 상태를 False로 변경
+ 
+  + img[start_y:end_y, start_x:end_x]를 사용해 사각형 내부의 이미지 크롭
+ 
+  + r키가 눌리면 이미지를 다시 불러와 리셋
+ 
+  + s키가 눌리면 cv.imwrite을 사용해 이미지 저장
