@@ -34,7 +34,7 @@
  
   + 마우스의 움직임을 따라 사각형을 그리기 위해 시작 좌표 start_x, start_y와 종료 좌표 end_x, end_y, 그리는 상태 제어를 위한 drawing 변수 사용
  
-  + img.copy()를 사용해 원본 이미지 복사해 사용
+  + img.copy()를 사용해 원본 이미지 복사해 사용 (리셋하는 경우를 위해 원본 이미지 유지)
  
   + cv.EVENT_LBUTTONDOWN(마우스가 눌림) 상태일 때 시작 좌표를 저장하고 drawing 상태를 True로 변경
  
