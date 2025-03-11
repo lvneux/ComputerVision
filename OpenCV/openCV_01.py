@@ -2,15 +2,17 @@ import cv2 as cv
 import numpy as np
 import sys
 
-img = cv.imread('./sample.jpg')
+img = cv.imread('./soccer.jpg')
 
 if img is None:
     sys.exit('File not found')
 
-gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+img_2 = cv.resize(img, dsize=(0,0), fx=0.5, fy=0.5)
+
+gray = cv.cvtColor(img_2, cv.COLOR_BGR2GRAY)
 gray_img = cv.cvtColor(gray, cv.COLOR_GRAY2BGR)
 
-imgs=np.hstack((img, gray_img))
+imgs=np.hstack((img_2, gray_img))
         
 cv.imshow('Collected Images', imgs)
     
