@@ -1,7 +1,6 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&height=300&text=Computer%20Vision%20&desc=Gaeun%20YU&customColorList=0,2,3)
 
 # OpenCV
-----
 
 ## 1. 이미지 불러오기 및 그레이스케일 변환
 
