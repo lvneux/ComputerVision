@@ -1,5 +1,6 @@
 import cv2 as cv
 import sys
+import numpy as np
 
 img = cv.imread('./tree.png')
 
@@ -11,8 +12,14 @@ rows, cols = img.shape[:2]
 rot = cv.getRotationMatrix2D((cols/2, rows/2), 45, 1.5) 
 dst = cv.warpAffine(img, rot, (int(cols * 1.5), int(rows * 1.5)), flags=cv.INTER_LINEAR)
 
-cv.imshow('src', img)
-cv.imshow('dst', dst)
+start_x = (dst.shape[1] - cols) // 2
+start_y = (dst.shape[0] - rows) // 2
+
+dst_cropped = dst[start_y:start_y + rows, start_x:start_x + cols]
+
+combined = np.hstack((img, dst_cropped))
+
+cv.imshow('Result', combined)
 cv.waitKey()
 
 cv.destroyAllWindows()
