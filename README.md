@@ -1,8 +1,8 @@
 # OpenCV
 
 ### 1. 이미지 불러오기 및 그레이스케일 변환
-
-   ![Image](https://github.com/user-attachments/assets/9ba8aa94-0dfe-475f-bae7-fe43adfbf82f)
+   
+   <img src="https://github.com/user-attachments/assets/9ba8aa94-0dfe-475f-bae7-fe43adfbf82f" height="250"/>
 
   + 이미지 로드 및 사이즈 조정
      ```
@@ -23,8 +23,8 @@
      ```
 ### 2. 웹캠 영상에서 에지 검출
 
-   ![Image](https://github.com/user-attachments/assets/de145712-4c4c-47b3-9356-97e5dc60fd7a)
-
+   <img src="https://github.com/user-attachments/assets/de145712-4c4c-47b3-9356-97e5dc60fd7a" height="250"/>
+   
   + cv.VideoCapture를 사용해 웹캠 영상 로드
      ```
      cap = cv.VideoCapture(0, cv.CAP_DSHOW)
@@ -47,7 +47,7 @@
      ```
 ### 3. 마우스로 영역 선택 및 ROI(관심영역) 추출
 
-   ![Image](https://github.com/user-attachments/assets/db6b8860-ba49-4b0b-94e6-06157f48133d)
+   <img src="https://github.com/user-attachments/assets/db6b8860-ba49-4b0b-94e6-06157f48133d" height="250"/>
 
   + 마우스의 움직임을 따라 사각형을 그리기 위해 시작 좌표 start_x, start_y와 종료 좌표 end_x, end_y, 그리는 상태 제어를 위한 drawing 변수 사용
      ```
@@ -97,7 +97,9 @@
 # Vision Processing Basic
 
 ### 1. 이진화 및 히스토그램 구하기
- 
+
+   <img src="https://github.com/user-attachments/assets/37a1790d-d8fa-4215-8da5-8f16992488bc" height="250"/>
+
    + 그레이스케일 변환
      ```
      gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -112,6 +114,9 @@
      ``` 
     
 ### 2. 모폴로지 연산 적용하기
+
+   <img src="https://github.com/user-attachments/assets/075a09ec-5ae3-454d-9706-fa1e1fea5682" width="460"/>
+   <img src="https://github.com/user-attachments/assets/4f108a19-1e19-42d8-b8d5-e722ceccbb77" height="120" width="460"/>
 
    + 영상 크롭
      ```
@@ -134,6 +139,8 @@
      ```
      
 ### 3. 기하 연산 및 선형 보간 적용하기
+
+   <img src="https://github.com/user-attachments/assets/d8891f8c-1df0-436a-a09f-149fece33ff1" height="250"/>
  
    + 이미지를 45도 회전 시키는 회전 변환 행렬 생성 - 회전 중심 : (cols/2, rows/2)
      ```
