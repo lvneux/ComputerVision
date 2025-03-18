@@ -15,11 +15,11 @@ dst = cv.warpAffine(img, rot, (int(cols * 1.5), int(rows * 1.5)), flags=cv.INTER
 start_x = (dst.shape[1] - cols) // 2
 start_y = (dst.shape[0] - rows) // 2
 
-dst_cropped = dst[start_y:start_y + rows, start_x:start_x + cols]
+dst_crop = dst[start_y:start_y + rows, start_x:start_x + cols]
 
-combined = np.hstack((img, dst_cropped))
+imgs = np.hstack((img, dst_crop))
 
-cv.imshow('Result', combined)
+cv.imshow('Result', imgs)
 cv.waitKey()
 
 cv.destroyAllWindows()
