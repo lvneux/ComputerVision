@@ -144,3 +144,11 @@
      ```
      dst = cv.warpAffine(img, rot, (int(cols * 1.5), int(rows * 1.5)), flags=cv.INTER_LINEAR)
      ```
+   + 이미지를 한 화면에 출력하기 위해 img와 dst의 크기 조정(dst 이미지를 잘라 img 크기와 맞춤)
+     ```
+     start_x = (dst.shape[1] - cols) // 2
+     start_y = (dst.shape[0] - rows) // 2
+     dst_crop = dst[start_y:start_y + rows, start_x:start_x + cols]
+     imgs = np.hstack((img, dst_crop))
+     ```
+          
