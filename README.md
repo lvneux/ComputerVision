@@ -98,7 +98,7 @@
 
 ### 1. 이진화 및 히스토그램 구하기
 
-   <img src="https://github.com/user-attachments/assets/0187e145-6040-471d-a116-68c3da4cd4e7" height="250"/>
+   <img src="https://github.com/user-attachments/assets/60ebaec0-19c6-4767-a18f-2ef9cee42f6b" height="250"/>
 
    + 그레이스케일 변환
      ```
