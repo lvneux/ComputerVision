@@ -99,6 +99,7 @@
 ### 1. 이진화 및 히스토그램 구하기
    <img src="https://github.com/user-attachments/assets/eeecdee9-29e8-43ab-a034-7a8df8e89720" height="250"/>
    <img src="https://github.com/user-attachments/assets/60ebaec0-19c6-4767-a18f-2ef9cee42f6b" height="250"/>
+   <img src="https://github.com/user-attachments/assets/37a1790d-d8fa-4215-8da5-8f16992488bc" height="250"/>
 
    + 그레이스케일 변환
      ```
