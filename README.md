@@ -131,7 +131,7 @@
 ### 2. 모폴로지 연산 적용하기
 
    <img src="https://github.com/user-attachments/assets/075a09ec-5ae3-454d-9706-fa1e1fea5682" width="460"/>
-   <img src="https://github.com/user-attachments/assets/4f108a19-1e19-42d8-b8d5-e722ceccbb77" height="120" width="460"/>
+   <img src="https://github.com/user-attachments/assets/ccbaaef2-fb38-4ac3-810a-c5e1d28380ba" height="120" width="460"/>
 
    + 영상 크롭
      ```
