@@ -102,23 +102,31 @@
 # Vision Processing Basic
 
 ### 1. 이진화 및 히스토그램 구하기
-   <img src="https://github.com/user-attachments/assets/eeecdee9-29e8-43ab-a034-7a8df8e89720" height="250"/>
-   <img src="https://github.com/user-attachments/assets/60ebaec0-19c6-4767-a18f-2ef9cee42f6b" height="250"/>
    <img src="https://github.com/user-attachments/assets/37a1790d-d8fa-4215-8da5-8f16992488bc" height="250"/>
-
+   <img src="https://github.com/user-attachments/assets/60ebaec0-19c6-4767-a18f-2ef9cee42f6b" height="250"/>
+   
    + 그레이스케일 변환
      ```
      gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
      ```
    + 이진화 수행
      ```
-     t, bin_img = cv.threshold(gray[:,:], 127, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
+     t, bin_img = cv.threshold(gray[:,:], 127, 255, cv.THRESH_BINARY)
      ```
+     + 명암 영상 이진화</br>
+     : 임계값 T보다 큰 화소는 1, 그렇지 않은 화소는 0으로 변환</br>
+     : f는 원래 명암 영상, b는 이진 영상
+     + 임계값을 127로 지정했기 때문에 OTSU 알고리즘을 사용하지 않음
+     + gray[:,:]를 사용해 그레이스케일 이미지를 그대로 전달
    + 히스토그램 계산
      ```
      h=cv.calcHist([bin_img],[0],None,[256],[0,256])
      h2=h=cv.calcHist([gray],[0],None,[256],[0,256])
-     ``` 
+     ```
+     + h : 그레이스케일 이미지에 대한 히스토그램 계산 
+     + h2 : 이진화된 이미지에 대한 히스토그램 계산
+     + 그레이스케일 이미지는 단일 채널(1채널)으로, 채널 번호는 0만 존재함
+   
     
 ### 2. 모폴로지 연산 적용하기
 
@@ -142,7 +150,7 @@
      ```
    + 이미지 한 줄로 배치
      ```
-     imgs = np.hstack((img_dilate,img_erode,img_open,img_close))
+     imgs = np.hstack((b,img_dilate,img_erode,img_open,img_close))
      ```
      
 ### 3. 기하 연산 및 선형 보간 적용하기
