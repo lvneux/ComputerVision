@@ -9,8 +9,6 @@ plt.imshow(bin_img,cmap='gray'), plt.xticks([]), plt.yticks([])
 plt.show()
 
 b = bin_img[bin_img.shape[0]//2:bin_img.shape[0],0:bin_img.shape[0]//2+1]
-plt.imshow(bin_img,cmap='gray'), plt.xticks([]), plt.yticks([])
-plt.show()
 
 kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 5))
 
@@ -19,9 +17,9 @@ img_erode = cv.morphologyEx(b, cv.MORPH_ERODE, kernel)
 img_open = cv.morphologyEx(b, cv.MORPH_OPEN, kernel)
 img_close = cv.morphologyEx(b, cv.MORPH_CLOSE, kernel)
 
-imgs = np.hstack((img_dilate,img_erode,img_open,img_close))
+imgs = np.hstack((b,img_dilate,img_erode,img_open,img_close))
 
-cv.imshow('Drawing', imgs)
+cv.imshow('Original - Dilate - Eroded - Opened - Closed', imgs)
 
 cv.waitKey()
 cv.destroyAllWindows()
