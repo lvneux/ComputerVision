@@ -114,6 +114,7 @@
      t, bin_img = cv.threshold(gray[:,:], 127, 255, cv.THRESH_BINARY)
      ```
      + 명암 영상 이진화</br>
+     <img src="https://github.com/user-attachments/assets/62ac1be3-099c-4fcf-9105-28bff708b09a" height="50"/></br>
      : 임계값 T보다 큰 화소는 1, 그렇지 않은 화소는 0으로 변환</br>
      : f는 원래 명암 영상, b는 이진 영상
      + 임계값을 127로 지정했기 때문에 OTSU 알고리즘을 사용하지 않음
