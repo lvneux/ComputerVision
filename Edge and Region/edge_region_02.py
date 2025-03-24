@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 
 img = cv.imread('./edgeDetectionImage.jpg')
 
-if  img is None:
-    sys.exit('파일을 찾을 수 없습니다.')
-
 gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
 
 canny = cv.Canny(gray, 100, 200)
