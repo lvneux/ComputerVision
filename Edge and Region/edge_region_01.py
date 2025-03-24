@@ -27,3 +27,4 @@ plt.title('Edge Strength')
 plt.axis('off')
 
 plt.show()
+
