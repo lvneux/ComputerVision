@@ -1,4 +1,4 @@
-# link
+# Link
 - [OpenCV](#opencv)
 - [Vision Processing Basic](#vision-processing-basic)
 - [Edge and Region](#edge-and-region)
@@ -179,7 +179,7 @@
 
 ### 1. 소벨 에지 검출 및 결과 시각화
    
-   <img src="https://github.com/user-attachments/assets/5531ec81-44c9-42e9-8853-60a6073e2669" height="250"/>
+   <img src="https://github.com/user-attachments/assets/5531ec81-44c9-42e9-8853-60a6073e2669"/>
 
   + 이미지 로드 및 그레이스케일 변환
      ```
