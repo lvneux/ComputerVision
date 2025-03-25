@@ -134,14 +134,36 @@
    <img src="https://github.com/user-attachments/assets/075a09ec-5ae3-454d-9706-fa1e1fea5682" width="460"/>
    <img src="https://github.com/user-attachments/assets/ccbaaef2-fb38-4ac3-810a-c5e1d28380ba" height="120" width="460"/>
 
+   + 모폴로지 연산
+
+      <img src="https://github.com/user-attachments/assets/e49d172b-28c3-46b9-8a3e-2de07180d986"  height="120"/>
+      
+     + 구조 요소를 이용해 영역의 모양을 조작
+     + 영상을 변환하는 과정에서 하나의 물체가 여러 영역으로 분리되거나 한 영역으로 붙는 부작용을 없애기 위해 사용
+     + 모폴로지 연산의 종류
+          <img src="https://github.com/user-attachments/assets/857f3004-dff8-4310-beb4-6bb0239bf1b8"/>
+         + 팽창 : 구조 요소의 중심을 1인 화소에 씌운 다음 구조 요소에 해당하는 모든 화소를 1로 바꿈
+         + 침식 : 구조 요소의 중심을 1인 화소 p에 씌운 다음 구조 요소에 해당하는 모든 화소가 1인 경우에 p를 1로 유지하고 그렇지 않으면 0으로 바꿈
+         + 열림 : 침식한 결과에 팽창을 적용 (원래 영역 크기 유지)
+         + 닫힘 : 팽창한 결과에 침식을 적용 (원래 영역 크기 유지)
    + 영상 크롭
      ```
      b = bin_img[bin_img.shape[0]//2:bin_img.shape[0],0:bin_img.shape[0]//2+1]
      ```
+     + bin_img.shape[0] : 이미지의 세로(행) 크기
+     + bin_img.shape[0]//2:bin_img.shape[0] : 이미지 세로 길이의 절반부터 끝까지(이미지의 아래쪽 절반)
+     + 0:bin_img.shape[0]//2+1 : 첫 번쨰 열부터 시작해 세로 길이의 절반 +1까지(이미지의 왼쪽 절반보다 1열 더 많은 영역)
    + 5x5 커널 생성
      ```
      kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 5))
      ```
+     + cv2.getStructuringElement(shape, ksizem anchor)
+         + shape : 커널의 모양
+             + cv2.MORPH_CROSS : 십자가형
+             + cv2.MORPH_ELLIPSE : 타원형
+             + cv2.MORPH_RECT : 직사각형
+         + ksize : 커널의 크기
+         + anchor : 커널의 기준점으로, default(-1,1)은 중심을 기준점으로 함. 이 값은 cv.MORPH_CROSS 커널을 사용할 때만 영향이 있음
    + 모폴로지 연산 -> 팽창(Dilation), 침식(Erosion), 열림(Open), 닫힘(Close)
      ```
      img_dilate = cv.morphologyEx(b, cv.MORPH_DILATE, kernel)
@@ -149,6 +171,15 @@
      img_open = cv.morphologyEx(b, cv.MORPH_OPEN, kernel)
      img_close = cv.morphologyEx(b, cv.MORPH_CLOSE, kernel)
      ```
+     + cv2.morphologyEx(src, op, kernel, dst, anchor, iteration, borderType, borderValue)
+        + src : 입력 영상
+        + op : 모폴로지 연산 종류
+             + cv2.MORPH_DILATE: 팽창 연산
+             + cv2.MORPH_ERODE: 침식 연산  
+             + cv2.MORPH_OPEN: 열림 연산
+             + cv2.MORPH_COLSE: 닫힘 연산
+        + kernel : 구조화 요소 커널
+        + dst, anchor, iteration, borderType, borderValue : optional. 각각 결과 영상, 커널의 기준점, 연산 반복 횟수, 외곽 영역 보정 방법, 외곽 영역 보정 값을 조정함
    + 이미지 한 줄로 배치
      ```
      imgs = np.hstack((b,img_dilate,img_erode,img_open,img_close))
