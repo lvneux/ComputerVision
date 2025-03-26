@@ -189,15 +189,28 @@
 
    <img src="https://github.com/user-attachments/assets/d8891f8c-1df0-436a-a09f-149fece33ff1" height="250"/>
  
-   + 이미지를 45도 회전 시키는 회전 변환 행렬 생성 - 회전 중심 : (cols/2, rows/2)
+   + 기하 연산 - 회전 변환 
      ```
      rows, cols = img.shape[:2]
      rot = cv.getRotationMatrix2D((cols/2, rows/2), 45, 1.5)  
      ```
-   + 이미지 회전 및 확대(45도 회전, 1.5배 확대) & 선형보간 적용(cv.INTER_LINEAR)
+        + cv.getRotationMAtrix2D(center, angle, scale) : 2D 회전 변환 행렬 생성
+             + center : cols/2, rows/2를 사용해 이미지의 중심을 기준으로 회전
+             + angle : 45를 사용해 이미지 회전
+             + scale : 1.5를 사용해 이미지의 크기를 확대
+   + 선형보간 적용 
      ```
      dst = cv.warpAffine(img, rot, (int(cols * 1.5), int(rows * 1.5)), flags=cv.INTER_LINEAR)
      ```
+        + cv2.warpAffine(src, M, dsize, dst=None, flags=None, borderMode=None, borderValue=None) : 이미지를 선형 변환하는 함수
+             + src : 입력 영상
+             + M : Affine 변환 행렬
+             + dsize : 결과 영상 크기. (w,h) 튜플 형태로 설정. (0,0)인 경우 src와 같은 크기로 설정
+             + flags : 보간법 지정. default=cv2.INTER_LINEAR
+             + borderMode : 가장자리 픽셀 확장 방식. default=cv2.BORDER_CONSTANT
+             + borderValue : cv2.BORDER_CONSTANT일 때 사용할 상수 값. default=0(검정색)
+        + cv.INTER_LINEAR를 사용해 양선형 보간법 적용
+             + 양선형 보간법 : x, y 두 방향에 걸쳐 계산하는 방법으로, 화소에 걸친 비율에 따라 가중 평균하여 화솟값을 계산함 
    + 이미지를 한 화면에 출력하기 위해 img와 dst의 크기 조정(dst 이미지를 잘라 img 크기와 맞춤)
      ```
      start_x = (dst.shape[1] - cols) // 2
@@ -205,7 +218,11 @@
      dst_crop = dst[start_y:start_y + rows, start_x:start_x + cols]
      imgs = np.hstack((img, dst_crop))
      ```
-          
+        + 회전 후 이미지는 크기가 증가하므로, 원본 크기로 다시 잘라 중심을 맞춤
+             + (start_x, start_y) : 중앙에서 원본 이미지 크기만큼 잘라낼 시작 좌표
+             + start_y:start_y + rows : 세로 방향(높이)로 rows만큼 잘라냄
+             + start_x:start_x + cols : 가로 방향(너비)로 cols만큼 잘라냄
+      
 # Edge and Region
 
 ### 1. 소벨 에지 검출 및 결과 시각화
