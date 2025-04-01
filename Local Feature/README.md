@@ -283,26 +283,29 @@ bf_matcher = cv.BFMatcher_create(cv.NORM_L2)
 matches = bf_matcher.knnMatch(des1, des2, 2)
 
 T = 0.7
-good_matches = [m for m, n in matches if m.distance < T * n.distance]
+good_match = []
+for nearest1, nearest2 in matches:
+    if (nearest1.distance/nearest2.distance)<T:
+        good_match.append(nearest1)
 
-if len(good_matches) > 4:  
+if len(good_match) > 4:  
 
-    points1 = np.float32([kp1[m.queryIdx].pt for m in good_matches])
-    points2 = np.float32([kp2[m.trainIdx].pt for m in good_matches])
+    points1 = np.float32([kp1[m.queryIdx].pt for m in good_match])
+    points2 = np.float32([kp2[m.trainIdx].pt for m in good_match])
 
     H, mask = cv.findHomography(points1, points2, cv.RANSAC)
 
     h, w = img2.shape[0], img2.shape[1]
     img1_warped = cv.warpPerspective(img1, H, (w, h))
 
-    side_by_side = np.hstack((img1_warped, img1))
+    imgs = np.hstack((img1_warped, img1))
     
     comparison = cv.addWeighted(img1_warped, 0.5, img2, 0.5, 0)
 
-    cv.imshow('Warped Image', side_by_side)
+    cv.imshow('Warped Image', imgs)
     cv.imshow('Comparison', comparison)
 
-    img_match = cv.drawMatches(img1, kp1, img2, kp2, good_matches, None, 
+    img_match = cv.drawMatches(img1, kp1, img2, kp2, good_match, None, 
                                flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
     cv.imshow('Feature Matches', img_match)
 
@@ -310,132 +313,98 @@ if len(good_matches) > 4:
     cv.destroyAllWindows()
  ```
 
-## 이미지 로드 및 cv.grabCut 초기 실행
+## 이미지 로드 및 그레이스케일 변환
  ```
-     src = skimage.data.coffee()
+img1 = cv.imread('./imgs/img1.jpg')
+gray1 = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
+img2 = cv.imread('./imgs/img2.jpg')
+gray2 = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
+ ```
 
-     mask = np.zeros(src.shape[:2], np.uint8)
-     bgdModel = np.zeros((1,65), np.float64)
-     fgdModel = np.zeros((1,65), np.float64)
-     iterCount = 1
-     mode = cv.GC_INIT_WITH_RECT
+## SIFT 특징점 추출 
+ ```
+sift = cv.SIFT_create()
+kp1, des1 = sift.detectAndCompute(gray1, None)
+kp2, des2 = sift.detectAndCompute(gray2, None)
+ ```
 
-     rc = (20, 20, 560, 360)
+## cv.BFMatcher() - 특징점 매칭
+ ```
+bf_matcher = cv.BFMatcher_create(cv.NORM_L2)
+matches = bf_matcher.knnMatch(des1, des2, 2)
 
-     cv.grabCut(src, mask, rc, bgdModel, fgdModel, iterCount, mode)
+T = 0.7
+good_match = []
+for nearest1, nearest2 in matches:
+    if (nearest1.distance/nearest2.distance)<T:
+        good_match.append(nearest1)
  ```
-+ skimage.data.coffee() : skimage에서 제공하는 이미지 로드
-+ mask
-  + src의 3차원 배열 형태(높이x너비x채널)에서 이미지의 크기(높이,너비)정보를 추출
-  + np.zeros(src.shape[:2], np.uint8)을 통해 이미지 크기의 배열을 0으로 채움
-  + np.uint8 : 0~255 범위의 정수값 저장
-  + src 이미지와 동일한 크기의 2차원 배열(마스크)로 초기화되어, grabCut에서 배경(백그라운드)과 전경(포그라운드)을 구분하기 위한 마스크로 활용됨
-  + mask 배열의 각 픽셀은 cv.GC_BGD(0), cv.GC_FGD(1), cv.GC_PR_BGD(2), cv.GC_PR_FGD(3)으로 분류되며, 초기에는 모든 픽셀을 cv.GC_BGD로 설정해 완전한 배경으로 가정 
-+ bgdModel, fgdModel : grabCut 내부에서 사용되는 배경 및 전경 모델
-+ iterCount : 1회 반복 실행
-+ mode : cv.GC_INIT_WITH_RECT으로 설정하여 초기 전경 영역을 사각형(rc)으로 설정
-+ rc : 좌측 상단 (20, 20)에서 가로 560, 세로 360 영역을 전경으로 설정
-+ grabCut 초기 실행 후 : mask가 0~3 값으로 업데이트
-  
-## 마스크를 사용해 원본 이미지에서 배경 제거 
- ```
-     mask2 = np.where((mask==cv.GC_BGD) | (mask==cv.GC_PR_BGD), 0, 1).astype('uint8')
-     dst = src*mask2[:,:,np.newaxis]
-     cv.imshow('dst', dst)
- ```
-+ mask2
-  + cv.GC_BGD(0)와 cv.GC_PR_BGD(2)를 0으로, 나머지는 1로 변환
-+ dst
-  + src : 컬러 영상 채널을 갖는 3차원 행렬
-  + mask2 : 그레이 스케일 영상의 2차원 행렬
-  + newaxis를 적용하여 같은 차원으로 만든 후 곱셈
-  + 배경(mask2=0)은 검은색(0), 전경(mask2=1)은 원래 색 유지
-+ cv.imshow : 전경 추출된 결과 출력력
++ cv2.BFMatcher_create(normType=None, crossCheck=None)
+  + normType : 거리 측정 알고리즘 지정(default=cv.NORM_L2)
+    + cv.NORM_L1 : L1 norm 사용
+    + cv.NORM_L2 : L2 norm 사용
+    + cv.NORM_HAMMING : 해밍 거리 사용
+    + cv.NORM_HAMMING2 : 두 비트를 한 단위로 취급하여 해밍 거리 계산
+  + crossCheck : boolean 타입으로, True면 양방향 매칭 결과가 같은 경우만 반환(default=False)
 
-## 마우스 콜백 함수 정의 
+## cv.findHomography() - 호모그래피 행렬 계산 
  ```
-     def on_mouse(event, x, y, flags, param):
-          if event==cv.EVENT_LBUTTONDOWN:
-              cv.circle(dst, (x,y), 3, (255,0,0), -1)
-              cv.circle(mask, (x,y), 3, cv.GC_FGD, -1)
-              cv.imshow('dst', dst)
-          elif event==cv.EVENT_RBUTTONDOWN:
-              cv.circle(dst, (x,y), 3, (0,0,255), -1)
-              cv.circle(mask, (x,y), 3, cv.GC_BGD, -1)
-              cv.imshow('dst', dst)    
-          elif event==cv.EVENT_MOUSEMOVE:
-              if flags&cv.EVENT_FLAG_LBUTTON:
-                  cv.circle(dst, (x,y), 3, (255,0,0), -1)
-                  cv.circle(mask, (x,y), 3, cv.GC_FGD, -1)
-                  cv.imshow('dst', dst)           
-              elif flags&cv.EVENT_FLAG_RBUTTON:
-                  cv.circle(dst, (x,y), 3, (0,0,255), -1)
-                  cv.circle(mask, (x,y), 3, cv.GC_BGD, -1)
-                  cv.imshow('dst', dst)            
+if len(good_match) > 4:  
 
-     cv.setMouseCallback('dst', on_mouse)
- ```
-+ cv2.circle(img, center, radius, color, thickness=None, lineType=None, shift=None) -> img
-  + img : 그림을 그릴 영상
-  + center : 원의 중심 좌표, (x, y)
-  + radius : 원의 반지름
-  + color : 선 색상, (B, G, R)
-  + thickness : 선 두께(default=1, -1로 지정하면 내부를 채움)
-  + lineType : 선 타입(cv2.LINE_4 or cv2.LINE_8 or cv2.LINE_AA)
-  + shift : 그리기 좌표 값의 축소 비율(default=0) 
-+ cv.EVENT_LBUTTONDOWN(좌클릭)
-  ```
-  cv.circle(dst, (x, y), 3, (255, 0, 0), -1)
-  cv.circle(mask, (x, y), 3, cv.GC_FGD, -1) 
-  ```
-  + 사용자가 왼쪽 버튼을 클릭하면, 해당 좌표에 파란색 점을 그림
-  + mask 배열에서도 해당 좌표를 전경(GC_FGD)으로 설정
-+ cv.EVENT_RBUTTONDOWN(우클릭)
-  ```
-  cv.circle(dst, (x, y), 3, (0, 0, 255), -1)
-  cv.circle(mask, (x, y), 3, cv.GC_BGD, -1) 
-  ```
-  + 사용자가 오른쪽 버튼을 클릭하면, 해당 좌표에 빨간색 점을 그림
-  + mask 배열에서도 해당 좌표를 배경(GC_BGD)으로 설정
-+ cv.EVENT_MOUSEMOVE(마우스 이동)
-  ```
-  if flags & cv.EVENT_FLAG_LBUTTON:
-    cv.circle(dst, (x, y), 3, (255, 0, 0), -1) 
-    cv.circle(mask, (x, y), 3, cv.GC_FGD, -1)  
-    cv.imshow('dst', dst)           
-  elif flags & cv.EVENT_FLAG_RBUTTON:
-    cv.circle(dst, (x, y), 3, (0, 0, 255), -1)
-    cv.circle(mask, (x, y), 3, cv.GC_BGD, -1)  
-    cv.imshow('dst', dst)
-  ```
-  + flags & cv.EVENT_FLAG_LBUTTON(왼쪽 버튼을 누른 상태에서 마우스 이동) : 파란색 선이 그려지면서 mask 값이 전경(GC_FGD)으로 설정
-  + flags & cv.EVENT_FLAG_RBUTTON(오른쪽 버튼을 누른 상태에서 마우스 이동) : 빨색 선이 그려지면서 mask 값이 배경(GC_BGD)으로 설정
+    points1 = np.float32([kp1[m.queryIdx].pt for m in good_match])
+    points2 = np.float32([kp2[m.trainIdx].pt for m in good_match])
 
-## 키보드 이벤트 & 결과 시각화 
+    H, mask = cv.findHomography(points1, points2, cv.RANSAC)
  ```
-     while True: 
-         key=cv.waitKey()
-         if key == 13:
-             cv.grabCut(src, mask, rc, bgdModel, fgdModel, 1, cv.GC_INIT_WITH_MASK)
-             mask2=np.where((mask==cv.GC_PR_BGD) | (mask==cv.GC_BGD), 0, 1).astype('uint8')     
-             dst = src*mask2[:,:,np.newaxis]
-             cv.imshow('dst',dst)
-         elif key == 27:
-             fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-             axs[0].imshow(src)
-             axs[0].set_title('Original Image')
-             axs[1].imshow(mask2, cmap='gray')
-             axs[1].set_title('Mask')
-             axs[2].imshow(dst)
-             axs[2].set_title('Object Extracted')
-             plt.show()
-             break
- ```
-+ enter(key == 13) : 선택한 영역에 대해 배경 제거
-+ esc(key == 27) : 원본 이미지 마스크 이미지, 배경 제거 이미지 시각화
-  
++ 호모그래피 추정을 위해서는 최소 4개의 매칭 쌍이 있어야하므로, <b>len(good_match) > 4</b>를 사용해 조건 제
++ point1, point2 좌표 추출
+  + queryIdx
+    + 첫 번째 이미지의 키포인트 인덱스
+    + 예를 들어 kp1[5].pt인 경우, kp1[5]의 값 (x1, y1)은 img1의 5번째 키포인트 위치를 의미함
+  + trainIdx
+    + 두 번째 이미지의 대응 키포인트 인덱스
+    + 예를 들어 kp1[5].pt인 경우, kp2[5]의 값 (x2, y2)는 img2의 5번째 키포인트 위치를 의미함
++ cv.findHomography(srcPoints, dstPoints, method=None, ransacReprojThreshold=None, mask=None, maxIters=None, confidence=None) -> retval, mask
+  + srcPoints : 1번 이미지 특징점 좌표
+  + dstPoints : 2번 이미지 특징점 좌표
+  + method : 호모그래피 행렬 계산 방법. 0, LMEDS, RANSAC, RHO 중 선택(defaule=0, 이상치가 있을 경우=RANSAC,RHO 권장)
+  + ansacReprojThreshold : RANSAC 재투영 에러 허용치(default=3)
+  + maxIters : RANSAC 최대 반복 횟수(default=2000)
+  + retval: 호모그래피 행렬
+  + mask: 출력 마스크 행렬(RANSAC, RHO 방법 사용 시 Inlier로 사용된 점들을 1로 표시한 행렬)
+
+## 이미지 변환 및 시각화
+```
+    h, w = img2.shape[0], img2.shape[1]
+    img1_warped = cv.warpPerspective(img1, H, (w, h))
+
+    imgs = np.hstack((img1_warped, img1))
+    
+    comparison = cv.addWeighted(img1_warped, 0.5, img2, 0.5, 0)
+
+    img_match = cv.drawMatches(img1, kp1, img2, kp2, good_match, None, 
+                               flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+```
++ h, w를 img2의 높이와 너비로 설정하여 변환된 이미지의 크기를 img2와 동일하게 설정
++ cv.warpPerspective(src, M, dsize, dst=None, flags=None, borderMode=None, borderValue=None)
+  + src : 변환할 원본 이미지
+  + M : 3x3 변환 행렬 -> img1에 H 행렬을 적용하여 img2의 시점으로 변환
+  + dsize : 변환 후 출력될 이미지 크기(width, height)
+  + dst : 출력 결과를 저장할 변수
+  + flags : 보간법 지정(cv.INTER_NEAREST, cv.INTER_LINEAR, cv.INTER_CUBIC, cv.INTER_LANCZOS4 중 선택. default=cv.INTER_LINEAR)
+  + borderMode : 테두리 처리 방식 (cv.BORDER_CONSTANT, cv.BORDER_REPLICATE, cv.BORDER_REFLECT, cv.BORDER_WRAP 중 선택. default=cv.BORDER__CONSTANT)
+  + borderValue : 테두리 픽셀의 색상 값(default=(0,0,0))
++ np.hstack()을 사용하여 변환된 이미지와 원본 이미지를 나란히 배치해 비교 
++ cv.addWeighted()
+  + 변환된 이미지와 대상 이미지를 50%씩 혼합하여 두 이미지의 정렬 결과 확인
+  + 필수 parameters : src1(첫 번째 입력 이미지), alpha(첫 번째 이미지의 가중치), src2(두 번째 입력 이미지), beta(두 번째 이미지의 가중치), gamma(밝기 조정을 위해 추가적으로 더할 값)
++ cv.drawMatches()
+  + 매칭 결과 시각화
+
 ## 실행 결과
-   <img src="https://github.com/user-attachments/assets/493c21e4-7f8d-4304-92b2-cbb114b22baf" height="250"/>
-   <img src="https://github.com/user-attachments/assets/6b37ab8b-e74b-4ae1-9f47-a649971a5d7e" height="250"/>
-
-
++ 변환된 이미지와 원본 이미지 비교
+   <img src="https://github.com/user-attachments/assets/2ea81cc7-f80a-4a3d-a3dd-a5a5f7c53b7f"/>
++ 변환된 이미지와 대상 이미지를 50%씩 혼합하여 두 이미지의 정렬 결과 확인
+   <img src="https://github.com/user-attachments/assets/1e7ad0fc-89d1-4ff2-9c79-382fab8d4f71"/>
++ 매칭 결과 시각화
+   <img src="https://github.com/user-attachments/assets/f0f285f7-8cec-437e-ab6d-e605cb40d6fa"/>
