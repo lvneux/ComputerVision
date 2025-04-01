@@ -250,85 +250,64 @@ plt.show()
 ## 실행 결과
    <img src="https://github.com/user-attachments/assets/237103b4-2190-4d02-bc06-e34da4beb38c"/>
 
-# 03. GrabCut을 이용한 대화식 영역 분할 및 객체 추출
+# 03. 호모그래피를 이용한 이미지 정합(Image Alignment)
 
 ## 과제 설명 및 요구사항
   + 설명
-     + 사용자가 지정한 사각형 영역을 바탕으로 GrabCut 알고리즘을 사용하여 객체 추출
-     + 객체 추출 결과를 마스크 형태로 시각화
-     + 원본 이미지에서 배경을 제거하고 객체만 남은 이미지를 출력
-   
+     + SIFT 특징점을 사용하여 두 이미지 간 대응점을 찾고, 이를 바탕으로 호모그래피를 계산하여 하나의 이미지 위에 정렬
+     + 샘플 파일로 img1.jpg, imag2.jpg, imag3.jpg 중 2개 선택
+
   + 요구사항
-      + cv.grabCut()를 사용하여 대화식 분할 수행
-      + 초기 사각형 영역은 (x, y, width, height) 형식으로 설정
-      + 마스크를 사용하여 원 본이미지에서 배경 제거
-      + matplotlib를 사용하여 원본 이미지, 마스크 이미지, 배경 제거 이미지를 나란히 시각화
+      + cv.imread()를 사용하여 두 개의 이미지 로드
+      + cv.SIFT_create()를 사용하여 특징점 검출
+      + cv.BFMatcher()를 사용하여 특징점 매칭
+      + cv.findHomography()를 사용하여 호모그래피 행렬 계산
+      + cv.warpPerspective()를 사용하여 한 이미지를 변환하여 다른 이미지와 정렬
+      + 변환된 이미지를 원본 이미지와 비교하여 출력
         
 ## 전체 코드 
    ```
-import skimage
-import numpy as np
 import cv2 as cv
-import matplotlib.pyplot as plt
+import numpy as np
 
-src = skimage.data.coffee()
+img1 = cv.imread('./imgs/img1.jpg')
+gray1 = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
+img2 = cv.imread('./imgs/img2.jpg')
+gray2 = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
 
-mask = np.zeros(src.shape[:2], np.uint8)
-bgdModel = np.zeros((1,65), np.float64)
-fgdModel = np.zeros((1,65), np.float64)
+sift = cv.SIFT_create()
+kp1, des1 = sift.detectAndCompute(gray1, None)
+kp2, des2 = sift.detectAndCompute(gray2, None)
 
-iterCount = 1
-mode = cv.GC_INIT_WITH_RECT
+bf_matcher = cv.BFMatcher_create(cv.NORM_L2)
+matches = bf_matcher.knnMatch(des1, des2, 2)
 
-rc = (20, 20, 560, 360)
+T = 0.7
+good_matches = [m for m, n in matches if m.distance < T * n.distance]
 
-cv.grabCut(src, mask, rc, bgdModel, fgdModel, iterCount, mode)
+if len(good_matches) > 4:  
 
-mask2 = np.where((mask==cv.GC_BGD) | (mask==cv.GC_PR_BGD), 0, 1).astype('uint8')
-dst = src*mask2[:,:,np.newaxis]
+    points1 = np.float32([kp1[m.queryIdx].pt for m in good_matches])
+    points2 = np.float32([kp2[m.trainIdx].pt for m in good_matches])
 
-cv.imshow('dst', dst)
+    H, mask = cv.findHomography(points1, points2, cv.RANSAC)
 
-def on_mouse(event, x, y, flags, param):
-    if event==cv.EVENT_LBUTTONDOWN:
-        cv.circle(dst, (x,y), 3, (255,0,0), -1)
-        cv.circle(mask, (x,y), 3, cv.GC_FGD, -1)
-        cv.imshow('dst', dst)
-    elif event==cv.EVENT_RBUTTONDOWN:
-        cv.circle(dst, (x,y), 3, (0,0,255), -1)
-        cv.circle(mask, (x,y), 3, cv.GC_BGD, -1)
-        cv.imshow('dst', dst)    
-    elif event==cv.EVENT_MOUSEMOVE:
-        if flags&cv.EVENT_FLAG_LBUTTON:
-            cv.circle(dst, (x,y), 3, (255,0,0), -1)
-            cv.circle(mask, (x,y), 3, cv.GC_FGD, -1)
-            cv.imshow('dst', dst)           
-        elif flags&cv.EVENT_FLAG_RBUTTON:
-            cv.circle(dst, (x,y), 3, (0,0,255), -1)
-            cv.circle(mask, (x,y), 3, cv.GC_BGD, -1)
-            cv.imshow('dst', dst)            
+    h, w = img2.shape[0], img2.shape[1]
+    img1_warped = cv.warpPerspective(img1, H, (w, h))
 
-cv.setMouseCallback('dst', on_mouse)
+    side_by_side = np.hstack((img1_warped, img1))
+    
+    comparison = cv.addWeighted(img1_warped, 0.5, img2, 0.5, 0)
 
-while True: 
-    key=cv.waitKey()
-    if key == 13:
-        cv.grabCut(src, mask, rc, bgdModel, fgdModel, 1, cv.GC_INIT_WITH_MASK)
-        mask2=np.where((mask==cv.GC_PR_BGD) | (mask==cv.GC_BGD), 0, 1).astype('uint8')     
-        dst = src*mask2[:,:,np.newaxis]
-        cv.imshow('dst',dst)
-    elif key == 27:
-        fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-        axs[0].imshow(src)
-        axs[0].set_title('Original Image')
-        axs[1].imshow(mask2, cmap='gray')
-        axs[1].set_title('Mask')
-        axs[2].imshow(dst)
-        axs[2].set_title('Object Extracted')
-        plt.show()
-        break
+    cv.imshow('Warped Image', side_by_side)
+    cv.imshow('Comparison', comparison)
 
-cv.destroyAllWindows()
+    img_match = cv.drawMatches(img1, kp1, img2, kp2, good_matches, None, 
+                               flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+    cv.imshow('Feature Matches', img_match)
+
+    cv.waitKey(0)
+    cv.destroyAllWindows()
  ```
 
 ## 이미지 로드 및 cv.grabCut 초기 실행
