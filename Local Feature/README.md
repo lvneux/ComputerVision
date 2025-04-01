@@ -403,8 +403,8 @@ if len(good_match) > 4:
 
 ## 실행 결과
 + 변환된 이미지와 원본 이미지 비교
-   <img src="https://github.com/user-attachments/assets/2ea81cc7-f80a-4a3d-a3dd-a5a5f7c53b7f"/>
+   <img src="https://github.com/user-attachments/assets/f0f285f7-8cec-437e-ab6d-e605cb40d6fa"/>
 + 변환된 이미지와 대상 이미지를 50%씩 혼합하여 두 이미지의 정렬 결과 확인
    <img src="https://github.com/user-attachments/assets/1e7ad0fc-89d1-4ff2-9c79-382fab8d4f71"/>
 + 매칭 결과 시각화
-   <img src="https://github.com/user-attachments/assets/f0f285f7-8cec-437e-ab6d-e605cb40d6fa"/>
+   <img src="https://github.com/user-attachments/assets/2ea81cc7-f80a-4a3d-a3dd-a5a5f7c53b7f"/>
