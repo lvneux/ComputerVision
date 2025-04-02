@@ -253,8 +253,9 @@ plt.show()
 
 ## 실행 결과
    <img src="https://github.com/user-attachments/assets/237103b4-2190-4d02-bc06-e34da4beb38c"/>
-   + BF Matcher 매칭에 걸린 시간 :  0.04779314994812012
-   + FLANN 매칭에 걸린 시간 : 0.13642454147338867
+
++ BF Matcher 매칭에 걸린 시간 :  0.04779314994812012
++ FLANN 매칭에 걸린 시간 : 0.13642454147338867
 
 # 03. 호모그래피를 이용한 이미지 정합(Image Alignment)
 
