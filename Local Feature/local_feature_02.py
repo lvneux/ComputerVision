@@ -3,9 +3,9 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-img1 = cv.imread('mot_color70.jpg')
+img1 = cv.imread('./imgs/mot_color70.jpg')[190:350,440:560]
 gray1 = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
-img2 = cv.imread('mot_color83.jpg')
+img2 = cv.imread('./imgs/mot_color83.jpg')
 gray2 = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
 
 sift = cv.SIFT_create()
@@ -16,16 +16,19 @@ print('특징점 개수 : ', len(kp1), len(kp2))
 
 start = time.time()
 
-FLANN_INDEX_KDTREE = 1
-index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
-search_params = dict(checks=50)
+#FLANN_INDEX_KDTREE = 1
+#index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+#search_params = dict(checks=50)
 
-flann_matcher = cv.FlannBasedMatcher(index_params, search_params)
-knn_match = flann_matcher.knnMatch(des1, des2, 2)
+#flann_matcher = cv.FlannBasedMatcher(index_params, search_params)
+#matches = flann_matcher.knnMatch(des1, des2, 2)
+
+bf_matcher = cv.BFMatcher_create(cv.NORM_L2)
+matches = bf_matcher.knnMatch(des1, des2, 2)
 
 T = 0.7
 good_match = []
-for nearest1, nearest2 in knn_match:
+for nearest1, nearest2 in matches:
     if (nearest1.distance/nearest2.distance)<T:
         good_match.append(nearest1)
 print('매칭에 걸린 시간 : ', time.time()-start)
