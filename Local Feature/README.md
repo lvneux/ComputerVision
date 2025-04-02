@@ -77,6 +77,7 @@ gray = cv.drawKeypoints(gray,kp,None,flags=cv.DrawMatchesFlags_DRAW_RICH_KEYPOIN
     + DEFAULT : 중심점만 표시(크기/방향 표시하지 않음)
     + DRAW_RICH_KEYPOINTS : 크기와 방향을 포함한 풍부한 시각화
     + NOT_DRAW_SINGLE_POINTS : 단일 점 표시 안함
+ + 이미지에서 특징점 원의 크기가 다른 이유 : cv.DrawMatchesFlags_DRAW_RICH_KEYPOINTS 플래그에 의해서 원의 크기는 특징점이 검출된 스케일 크기의 영향을 받으며, 검출된 스케일에 비례하는 크기의 원이 그려짐(원이 클수록 해당 특징점은 더 큰 영역에서 의미 있는 패턴을 가지고 있으며, 작은 원은 더 세밀한 특징을 나타낸다고 해석할 수 있음)
 
 ## matplotlib을 사용한 결과 시각화
  ```
@@ -118,7 +119,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-img1 = cv.imread('./imgs/mot_color70.jpg')
+img1 = cv.imread('./imgs/mot_color70.jpg')[190:350,440:560]
 gray1 = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
 img2 = cv.imread('./imgs/mot_color83.jpg')
 gray2 = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
@@ -131,16 +132,19 @@ print('특징점 개수 : ', len(kp1), len(kp2))
 
 start = time.time()
 
-FLANN_INDEX_KDTREE = 1
-index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
-search_params = dict(checks=50)
+#FLANN_INDEX_KDTREE = 1
+#index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+#search_params = dict(checks=50)
 
-flann_matcher = cv.FlannBasedMatcher(index_params, search_params)
-knn_match = flann_matcher.knnMatch(des1, des2, 2)
+#flann_matcher = cv.FlannBasedMatcher(index_params, search_params)
+#matches = flann_matcher.knnMatch(des1, des2, 2)
+
+bf_matcher = cv.BFMatcher_create(cv.NORM_L2)
+matches = bf_matcher.knnMatch(des1, des2, 2)
 
 T = 0.7
 good_match = []
-for nearest1, nearest2 in knn_match:
+for nearest1, nearest2 in matches:
     if (nearest1.distance/nearest2.distance)<T:
         good_match.append(nearest1)
 print('매칭에 걸린 시간 : ', time.time()-start)
