@@ -72,7 +72,6 @@
   + delta : 연산 결과에 추가적으로 더할 값(default=0)
   + borderType : 가장자리 픽셀 확장 방식(default=cv2.BORDER_DEFAULT)
 + X축(cv.CV_64F, 1, 0)과 Y축(cv.CV_64F, 0, 1) 방향의 에지를 검출
-+ CV_64F : numpy의 float64와 동일함
 
 ## cv.magnitude() - 에지 강도 계산 
  ```
