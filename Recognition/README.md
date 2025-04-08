@@ -397,7 +397,7 @@ plt.show()
 + 각 모델 Accuracy와 Loss에 대한 시각화
   
 ## 실행 결과 
-<img src="https://github.com/user-attachments/assets/07426fa9-81e4-408d-83b8-35dbc31f15e9"/>
+<img src="https://github.com/user-attachments/assets/3976f086-f7e2-464f-966a-d2539a961196"/>
 
-+ VGG16 정확도 : 0.6943
-+ CNN 정확도 : 
++ VGG16 정확도 : 0.6049
++ CNN 정확도 : 0.
