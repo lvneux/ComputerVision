@@ -4,7 +4,7 @@ from keras.applications import VGG16
 from keras import layers, models
 from keras.datasets import cifar10
 from keras import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 import matplotlib.pyplot as plt
 
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
@@ -19,10 +19,10 @@ for layer in base_model.layers:
 
 model = models.Sequential([
     base_model,
-    layers.Flatten(),
-    layers.Dense(256, activation='relu'),
-    layers.Dropout(0.5),
-    layers.Dense(10, activation='softmax')  
+    Flatten(),
+    Dense(256, activation='relu'),
+    Dropout(0.5),
+    Dense(10, activation='softmax')  
 ])
 
 model.compile(optimizer='adam',
@@ -31,16 +31,19 @@ model.compile(optimizer='adam',
 
 history = model.fit(x_train, y_train, 
                     epochs=10,
-                    validation_data=(x_test, y_test))
+                    validation_split=0.2)
+
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f'\nVGG16 테스트 정확도: {test_acc:.4f}')
 
 baseline_model = models.Sequential([
-    layers.Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)),
-    layers.MaxPooling2D((2,2)),
-    layers.Conv2D(64, (3,3), activation='relu'),
-    layers.MaxPooling2D((2,2)),
-    layers.Flatten(),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(10, activation='softmax')
+    Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)),
+    MaxPooling2D((2,2)),
+    Conv2D(64, (3,3), activation='relu'),
+    MaxPooling2D((2,2)),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
 ])
 
 baseline_model.compile(optimizer='adam',
@@ -49,7 +52,10 @@ baseline_model.compile(optimizer='adam',
 
 baseline_history = baseline_model.fit(x_train, y_train, 
                                       epochs=10,
-                                      validation_data=(x_test, y_test))
+                                      validation_split=0.2)
+
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f'\nCNN 테스트 정확도: {test_acc:.4f}')
 
 plt.figure(figsize=(12, 4))
 plt.subplot(1, 2, 1)
