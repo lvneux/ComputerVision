@@ -277,9 +277,6 @@ history = model.fit(x_train, y_train,
                     epochs=10,
                     validation_split=0.2)
 
-test_loss, test_acc = model.evaluate(x_test, y_test)
-print(f'\nVGG16 테스트 정확도: {test_acc:.4f}')
-
 baseline_model = models.Sequential([
     Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)),
     MaxPooling2D((2,2)),
@@ -298,8 +295,11 @@ baseline_history = baseline_model.fit(x_train, y_train,
                                       epochs=10,
                                       validation_split=0.2)
 
-test_loss, test_acc = model.evaluate(x_test, y_test)
-print(f'\nCNN 테스트 정확도: {test_acc:.4f}')
+test_loss, vgg_test_acc = model.evaluate(x_test, y_test, verbose=0)
+print(f'\nVGG16 테스트 정확도: {vgg_test_acc:.4f}')
+
+test_loss, cnn_test_acc = baseline_model.evaluate(x_test, y_test, verbose=0)
+print(f'CNN 테스트 정확도: {cnn_test_acc:.4f}')
 
 plt.figure(figsize=(12, 4))
 plt.subplot(1, 2, 1)
