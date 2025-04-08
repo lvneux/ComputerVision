@@ -22,4 +22,4 @@ history = model.fit(x_train, y_train,
                     batch_size=32)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
-print(f'\정확도: {test_acc:.4f}')
+print(f'정확도: {test_acc:.4f}')
