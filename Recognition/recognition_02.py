@@ -24,7 +24,7 @@ model.compile(optimizer='adam',
 
 history = model.fit(x_train, y_train, 
                     epochs=10,
-                    validation_data=(x_test, y_test))
+                    validation_split=0.2)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print(f'\n테스트 정확도: {test_acc:.4f}')
