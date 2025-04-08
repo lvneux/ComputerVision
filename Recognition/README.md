@@ -399,5 +399,3 @@ plt.show()
 ## 실행 결과 
 <img src="https://github.com/user-attachments/assets/3976f086-f7e2-464f-966a-d2539a961196"/>
 
-+ VGG16 정확도 : 0.6049
-+ CNN 정확도 : 0.
