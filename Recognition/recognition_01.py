@@ -3,7 +3,7 @@ from tensorflow import keras
 from keras.datasets import mnist
 from keras import Sequential
 from keras.layers import Dense, Flatten
-
+import matplotlib.pyplot as plt
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
@@ -19,7 +19,11 @@ model.compile(optimizer='adam',
 
 history = model.fit(x_train, y_train,
                     epochs=5,
-                    batch_size=32)
+                    batch_size=32,
+                    validation_split=0.2)
 
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print(f'정확도: {test_acc:.4f}')
+
+plt.plot(history.history['val_accuracy'])
+plt.show()
