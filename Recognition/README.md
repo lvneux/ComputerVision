@@ -90,6 +90,8 @@ print(f'정확도: {test_acc:.4f}')
 +  model.evaluate()를 사용해 모델 성능 평가
   
 ## 실행 결과 
+<img src="https://github.com/user-attachments/assets/5c67c0bd-16e4-4014-a9c8-4caec8ea5297"/>
+
 + 정확도: 0.9788
 
 
