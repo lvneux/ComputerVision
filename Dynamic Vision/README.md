@@ -262,7 +262,7 @@ cap.release()
 cv.destroyAllWindows()
  ```
 
-## MediaPipe Face Mesh 초기
+## MediaPipe Face Mesh 초기화 
  ```
 mp_face_mesh = mp.solutions.face_mesh
 mp_drawing = mp.solutions.drawing_utils
@@ -272,7 +272,7 @@ mp_styles = mp.solutions.drawing_styles
 + mp_drawing : 랜드마크를 프레임에 시각화할 때 사용
 + mp_styles : 랜드마크의 스타일(선/점 등)을 설정할 때 사용
 
-## FaceMesh 객체 설
+## FaceMesh 객체 설명 
  ```
 face_mesh = mp_face_mesh.FaceMesh(
     max_num_faces=2,
