@@ -178,7 +178,10 @@ while True:
 +  cap.read() : 프레임 획득
 +  yolo_detect() : YOLO 탐지 수행
 +  if det[5] == 0 : 'person' 클래스만 필터링
-+  sort.update() : SORT 추적 수행, ID가 할당된 박스 좌표를 반환 
++  sort.update() : SORT 추적 수행, ID가 할당된 박스 좌표를 반환
+
+## 실행 결과
+![Image](https://github.com/user-attachments/assets/28b060bc-b3ce-4fe3-a1fe-b49c52a379b7)
   
 # 02. Mediapipe를 활용한 얼굴 랜드마크 추출 및 시각화
 ## 과제 설명 및 요구사항
@@ -351,3 +354,6 @@ if cv.waitKey(1) == 27:  # ESC 키
 cap.release()
 cv.destroyAllWindows()
 ```
+
+## 실행 결과
+![Image](https://github.com/user-attachments/assets/f883d5e1-d35c-4af6-b3b0-4f672894ff41)
